@@ -5,22 +5,17 @@ services:
   drone-server:
     image: drone/drone:0.8-alpine
     ports:
-      - 443:443
+      - 80:8000
       # - "${PRO_PUBLIC_IP}:8000:8000"
-    # volumes:
-    #   - drone-data:/var/lib/drone/:rw
-    #   - ./conf.d/ssl:/etc/certs:rw
+    volumes:
+      - ./drone:/var/lib/drone/
     restart: always
     environment:
-      - DRONE_SECRET=drone
-      - DRONE_OPEN=false
-      - DRONE_ADMIN=ski2004
-      - DRONE_HOST=aa.test.net
+      - DRONE_OPEN=true
       - DRONE_GITHUB=true
-      - DRONE_GITHUB_CLIENT=ac8d94e73d649a6cbeab
-      - DRONE_GITHUB_SECRET=efc9bdf9d42c9f62ebe1afd27dba174aa33d7d73
-      - DRONE_SERVER_CERT=/etc/certs/drone.domain.com.crt
-      - DRONE_SERVER_KEY=/etc/certs/drone.domain.com.key
+      - DRONE_GITHUB_CLIENT=890046c6217d55167794
+      - DRONE_GITHUB_SECRET=4adf71aaa8d5260d96b09dad4ad25cd3d7587892
+      - DRONE_SECRET=drone
 
   drone-agent:
     image: drone/agent:0.8-alpine
@@ -31,8 +26,4 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:rw
     environment:
       - DRONE_SECRET=drone
-      - DRONE_SERVER=drone-server:9000
-    dns: 114.114.114.114
-
-volumes:
-  drone-data:
+      - DRONE_SERVER=ws://drone-server:8000/ws/broker
